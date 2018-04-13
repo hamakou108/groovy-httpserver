@@ -1,4 +1,4 @@
 import com.hamakou.*
 
-def hServer = new HttpServer("127.0.0.1", 18080)
+def hServer = new HttpServer("127.0.0.1", 12345)
 hServer.start()
