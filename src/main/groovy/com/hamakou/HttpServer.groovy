@@ -36,4 +36,9 @@ class HttpServer {
       }
     }
   }
+
+  static void main(String... args) {
+    def hServer = new HttpServer("127.0.0.1", 12345)
+    hServer.start()
+  }
 }

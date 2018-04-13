@@ -11,7 +11,7 @@ $ gradle build
 - start server
 
 ```
-$ groovy -cp ./src/main/groovy ./src/run.groovy
+$ groovy -cp src/main/groovy src/main/groovy/com/hamakou/HttpServer.groovy
 ```
 
 - connect server from client
