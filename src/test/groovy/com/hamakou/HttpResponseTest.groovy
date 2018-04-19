@@ -3,8 +3,7 @@ import spock.lang.*
 
 import com.hamakou.*
 
-class ResponseTest extends Specification {
-    // テストメソッド（フィーチャーメソッド）
+class HttpResponseTest extends Specification {
     def "正しいレスポンスが返ってくる"() {
         setup:
         Response response = new HttpResponse(request)
