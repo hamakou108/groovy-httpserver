@@ -2,17 +2,24 @@ package com.hamakou
 
 import java.nio.charset.Charset
 
-class HttpResponse implements Response {
-  String request
+import com.hamakou.*
 
-  def HttpResponse(String request) {
-    this.request = request
+class HttpResponse implements Response {
+
+  def HttpResponse(Request request) {
+    ;
   }
 
   def generate() {
     return """HTTP/1.0 200 OK
 Content-Type: text/html
 Server: my-groooooovy
-Content-Length: """ + request.getBytes(Charset.forName("UTF-8")).length + "\n\n" + request
+Content-Length: 14
+
+Hello, World!"""
+//    return """HTTP/1.0 200 OK
+//Content-Type: text/html
+//Server: my-groooooovy
+//Content-Length: """ + request.getBytes(Charset.forName("UTF-8")).length + "\n\n" + request
   }
 }

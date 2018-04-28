@@ -13,11 +13,20 @@ class HttpServerTask implements Runnable {
       // open up IO streams
       new BufferedReader(new InputStreamReader(socket.getInputStream())).withCloseable { reader ->
         new PrintWriter(socket.getOutputStream(), true).withCloseable { writer ->
-          // receives a http request from client
-          String request;
-          request = reader.readLine()
+          // receives a http request from client as String
+          String line;
+          String msg = "";
+          //msg = reader.readLine()
 
-          // generate response
+          while ((line = reader.readLine()) != null) {
+            if (line.isEmpty()) {
+              break;
+            }
+            msg += line + "\n";
+          }
+
+          // parse request and generate response
+          Request request = new HttpRequest(msg)
           Response response = new HttpResponse(request)
           writer.println(response.generate())
 
