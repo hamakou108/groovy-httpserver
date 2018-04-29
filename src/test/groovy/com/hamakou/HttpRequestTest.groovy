@@ -3,14 +3,22 @@ import spock.lang.*
 import com.hamakou.*
 
 class HttpRequestTest extends Specification {
-    @Shared msgGet = """GET / HTTP/1.0
+    @Shared msgGetOrigin = """GET / HTTP/1.0
 Host: localhost:12345
 User-Agent: curl/7.54.0
 Accept: */*"""
-    @Shared msgHead = """HEAD / HTTP/1.0
-Host:        localhost: 12345
-User-Agent:  curl/7.54.0
-Accept:      */*"""
+    @Shared msgGetOriginLongSP = """GET / HTTP/1.0
+Host:       localhost: 12345
+User-Agent: curl/7.54.0
+Accept:     */*"""
+    @Shared msgGetHtml = """GET /hamada.html HTTP/1.0
+Host: localhost:12345
+User-Agent: curl/7.54.0
+Accept: */*"""
+    @Shared msgHeadOrigin = """HEAD / HTTP/1.0
+Host: localhost:12345
+User-Agent: curl/7.54.0
+Accept: */*"""
     @Shared msgPost = """POST / HTTP/1.0
 Host: localhost:12345
 User-Agent: curl/7.54.0
@@ -29,8 +37,8 @@ Oh!!"""
 
         where:
         msg | result
-        msgGet | msgGet
-        msgHead | msgHead
+        msgGetOrigin | msgGetOrigin
+        msgHeadOrigin | msgHeadOrigin
     }
 
     def "リクエストラインを取り出せる"() {
@@ -38,25 +46,27 @@ Oh!!"""
         Request request = new HttpRequest(msg)
 
         expect:
-        request.getLine() == result
+        request.getMethod() + " " + request.getUri() + " " + request.getVersion() == result
 
         where:
         msg | result
-        msgGet | "GET / HTTP/1.0"
-        msgHead | "HEAD / HTTP/1.0"
+        msgGetOrigin | "GET / HTTP/1.0"
+        msgGetHtml | "GET /hamada.html HTTP/1.0"
+        msgHeadOrigin | "HEAD / HTTP/1.0"
     }
 
-    def "リクエストのヘッダーフィールドを取り出せる"() {
+    def "リクエストヘッダーフィールドを取り出せる"() {
         setup:
         Request request = new HttpRequest(msg)
 
         expect:
-        request.getHeaderFieldMap("Host") == result
+        request.getHeaderMap("Host") == result
 
         where:
         msg | result
-        msgGet | "localhost:12345"
-        msgHead | "localhost: 12345"
+        msgGetOrigin | "localhost:12345"
+        msgGetOriginLongSP | "localhost: 12345"
+        msgHeadOrigin | "localhost:12345"
     }
 
     def "リクエストボディを取り出せる"() {
@@ -68,8 +78,8 @@ Oh!!"""
 
         where:
         msg | result
-        msgGet | null
-        msgHead | null
+        msgGetOrigin | null
+        msgHeadOrigin | null
         //msgPost | "Oh!!"
     }
 }

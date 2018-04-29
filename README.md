@@ -2,16 +2,17 @@
 
 ## Usage
 
-- build project
+- build package
 
 ```
-$ gradle build
+$ gradle distZip
 ```
 
 - start server
 
 ```
-$ groovy -cp src/main/groovy src/main/groovy/com/hamakou/HttpServer.groovy
+$ cd build/distributions && unzip httpserver-groovy.zip
+$ cd httpserver-groovy && ./bin/httpserver-groovy
 ```
 
 - connect server from client
