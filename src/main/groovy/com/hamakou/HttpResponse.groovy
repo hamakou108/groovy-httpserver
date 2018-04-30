@@ -10,14 +10,23 @@ class HttpResponse implements Response {
     Integer statusCode
     String reasonPhrase
     String server
-    Map contentMap
+    Map contentMap = [:]
 
     def HttpResponse(Request request) {
-       // setup server information
-       this.setupServerInfo()
+        // setup server information
+        this.setupServerInfo()
 
-       // execute operation depending on method and uri
-       this.execMethod(request.method, request.uri)
+        try {
+            // execute operation depending on method and uri
+            this.execMethod(request.method, request.uri)
+        } catch (Exception e) {
+            def statusTmp = Statuses.getAsList(500)
+            this.statusCode = statusTmp[0]
+            this.reasonPhrase = statusTmp[1]
+            this.contentMap["type"] = Contents.TEXT_PLAIN.type
+            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
+            this.contentMap["length"] = this.contentMap["body"].length
+        }
     }
 
     def execMethod(String method, String uri) {
@@ -26,6 +35,9 @@ class HttpResponse implements Response {
             def statusTmp = Statuses.getAsList(405)
             this.statusCode = statusTmp[0]
             this.reasonPhrase = statusTmp[1]
+            this.contentMap["type"] = Contents.TEXT_PLAIN.type
+            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
+            this.contentMap["length"] = this.contentMap["body"].length
             return
         }
 
@@ -35,15 +47,21 @@ class HttpResponse implements Response {
             def statusTmp = Statuses.getAsList(403)
             this.statusCode = statusTmp[0]
             this.reasonPhrase = statusTmp[1]
+            this.contentMap["type"] = Contents.TEXT_PLAIN.type
+            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
+            this.contentMap["length"] = this.contentMap["body"].length
             return
         }
 
         // search contents and set some information about contents
         this.contentMap = Contents.generate(method, uri)
-        if (contentMap["body"] == null) {
+        if (this.contentMap["body"] == null) {
             def statusTmp = Statuses.getAsList(404)
             this.statusCode = statusTmp[0]
             this.reasonPhrase = statusTmp[1]
+            this.contentMap["type"] = Contents.TEXT_PLAIN.type
+            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
+            this.contentMap["length"] = this.contentMap["body"].length
             return
         }
 

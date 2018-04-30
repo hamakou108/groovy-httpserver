@@ -19,6 +19,10 @@ Accept: */*"""
 Host: localhost:12345
 User-Agent: curl/7.54.0
 Accept: */*"""
+//    @Shared msgGetHtml500 = """GET /index_cannotread.html HTTP/1.0
+//Host: localhost:12345
+//User-Agent: curl/7.54.0
+//Accept: */*"""
     @Shared msgGetCss = """GET /css/styles.css HTTP/1.0
 Host: localhost:12345
 User-Agent: curl/7.54.0
@@ -48,52 +52,6 @@ Content-Type: application/x-www-form-urlencoded
 
 Oh!!"""
 
-    def "URL に応じて適切なコンテンツタイプが返却される"() {
-        setup:
-        Request request = new HttpRequest(msg)
-        Response response = new HttpResponse(request)
-
-        expect:
-        response.contentMap["type"] == result
-
-        where:
-        msg | result
-        // Step 1
-        msgGetOrigin | "text/plain"
-        // Step 2
-        msgGetHtml | "text/html"
-        // Step 3
-        msgGetCss | "text/css"
-        // Step 4
-        msgGetJpeg | "image/jpeg"
-        // Step 5
-        msgHeadOrigin | "text/plain"
-        // Step 6
-        msgGetHtml404 | "text/plain"
-    }
-
-    def "URL に応じて適切なコンテンツレングスが返却される"() {
-        setup:
-        Request request = new HttpRequest(msg)
-        Response response = new HttpResponse(request)
-
-        expect:
-        response.contentMap["length"] == result
-
-        where:
-        msg | result
-        // Step 1
-        msgGetOrigin | 13
-        // Step 2
-        msgGetHtml | 361
-        // Step 3
-        msgGetCss | 82
-        // Step 4
-        msgGetJpeg | 8228
-        // Step 5
-        msgHeadOrigin | 13
-    }
-
     def "URL に応じて適切なステータスラインが返却される"() {
         setup:
         Request request = new HttpRequest(msg)
@@ -118,6 +76,64 @@ Oh!!"""
         msgGetHtml404 | "HTTP/1.0 404 Not Found\n"
         // Step 7
         msgPostOrigin | "HTTP/1.0 405 Method Not Allowed\n"
+        // Step 8
+        //msgGetHtml500 | "HTTP/1.0 500 Internal Server Error\n"
+    }
+
+    def "URL に応じて適切なコンテンツタイプが返却される"() {
+        setup:
+        Request request = new HttpRequest(msg)
+        Response response = new HttpResponse(request)
+
+        expect:
+        response.contentMap["type"] == result
+
+        where:
+        msg | result
+        // Step 1
+        msgGetOrigin | "text/plain"
+        // Step 2
+        msgGetHtml | "text/html"
+        // Step 3
+        msgGetCss | "text/css"
+        // Step 4
+        msgGetJpeg | "image/jpeg"
+        // Step 5
+        msgHeadOrigin | "text/plain"
+        // Step 6
+        msgGetHtml404 | "text/plain"
+        // Step 7
+        msgPostOrigin | "text/plain"
+        // Step 8
+        //msgGetHtml500 | "text/plain"
+    }
+
+    def "URL に応じて適切なコンテンツレングスが返却される"() {
+        setup:
+        Request request = new HttpRequest(msg)
+        Response response = new HttpResponse(request)
+
+        expect:
+        response.contentMap["length"] == result
+
+        where:
+        msg | result
+        // Step 1
+        msgGetOrigin | 13
+        // Step 2
+        msgGetHtml | 361
+        // Step 3
+        msgGetCss | 82
+        // Step 4
+        msgGetJpeg | 8228
+        // Step 5
+        msgHeadOrigin | 13
+        // Step 6
+        msgGetHtml404 | 0
+        // Step 7
+        msgPostOrigin | 0
+        // Step 8
+        //msgGetHtml500 | 0
     }
 
     def "HEAD メソッドに対してボディがレスポンスされない"() {

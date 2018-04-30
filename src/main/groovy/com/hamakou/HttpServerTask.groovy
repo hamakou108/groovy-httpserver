@@ -28,20 +28,20 @@ class HttpServerTask implements Runnable {
                         msg += line + "\n";
                     }
 
-                    try {
+//                    try {
                         // parse request and generate response
                         Request request = new HttpRequest(msg)
                         Response response = new HttpResponse(request)
                         writer.write(response.generateMsg())
                         writer.flush()
-                    } catch (e) {
-                        writer.write("""
-HTTP/1.0 500 Internal Server Error
-server: deoxys
-content-type: text/plain
-""".getBytes(Charset.forName("UTF-8")))
-                        writer.flush()
-                    }
+//                  } catch (e) {
+//                      writer.write("""
+//HTTP/1.0 500 Internal Server Error
+//server: deoxys
+//content-type: text/plain
+//""".getBytes(Charset.forName("UTF-8")))
+//                        writer.flush()
+//                    }
 
                     // close IO streams, then socket
                     System.out.println("Closing connection with client");
