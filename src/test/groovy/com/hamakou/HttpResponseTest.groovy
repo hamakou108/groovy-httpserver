@@ -48,32 +48,6 @@ Content-Type: application/x-www-form-urlencoded
 
 Oh!!"""
 
-    def "URL に応じて適切なステータスコードが返却される"() {
-        setup:
-        Request request = new HttpRequest(msg)
-        Response response = new HttpResponse(request)
-
-        expect:
-        response.statusCode == result
-
-        where:
-        msg | result
-        // Step 1
-        msgGetOrigin | 200
-        // Step 2
-        msgGetHtml | 200
-        // Step 3
-        msgGetCss | 200
-        // Step 4
-        msgGetJpeg | 200
-        // Step 5
-        msgHeadOrigin | 200
-        // Step 6
-        msgGetHtml404 | 404
-        // Step 7
-        msgPostOrigin | 405
-    }
-
     def "URL に応じて適切なコンテンツタイプが返却される"() {
         setup:
         Request request = new HttpRequest(msg)
@@ -118,6 +92,32 @@ Oh!!"""
         msgGetJpeg | 8228
         // Step 5
         msgHeadOrigin | 13
+    }
+
+    def "URL に応じて適切なステータスラインが返却される"() {
+        setup:
+        Request request = new HttpRequest(msg)
+        Response response = new HttpResponse(request)
+
+        expect:
+        new String(response.generateStatusLine(), "UTF-8") == result
+
+        where:
+        msg | result
+        // Step 1
+        msgGetOrigin | "HTTP/1.0 200 OK\n"
+        // Step 2
+        msgGetHtml | "HTTP/1.0 200 OK\n"
+        // Step 3
+        msgGetCss | "HTTP/1.0 200 OK\n"
+        // Step 4
+        msgGetJpeg | "HTTP/1.0 200 OK\n"
+        // Step 5
+        msgHeadOrigin | "HTTP/1.0 200 OK\n"
+        // Step 6
+        msgGetHtml404 | "HTTP/1.0 404 Not Found\n"
+        // Step 7
+        msgPostOrigin | "HTTP/1.0 405 Method Not Allowed\n"
     }
 
     def "HEAD メソッドに対してボディがレスポンスされない"() {
