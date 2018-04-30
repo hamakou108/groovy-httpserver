@@ -18,3 +18,9 @@ gradle-app.setting
 
 
 # End of https://www.gitignore.io/api/gradle
+
+# Vim
+Session.vim
+
+# .DS_Store
+*.DS_Store
