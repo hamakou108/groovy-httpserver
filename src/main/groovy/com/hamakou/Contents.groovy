@@ -62,4 +62,14 @@ enum Contents {
 
         return contentMap
     }
+
+    static Map generateEmpty() {
+        def contentMap = [:]
+
+        contentMap["type"] = Contents.TEXT_PLAIN.type
+        contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
+        contentMap["length"] = contentMap["body"].length
+
+        return contentMap
+    }
 }

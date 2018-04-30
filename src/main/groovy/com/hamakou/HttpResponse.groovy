@@ -20,55 +20,9 @@ class HttpResponse implements Response {
             // execute operation depending on method and uri
             this.execMethod(request.method, request.uri)
         } catch (Exception e) {
-            def statusTmp = Statuses.getAsList(500)
-            this.statusCode = statusTmp[0]
-            this.reasonPhrase = statusTmp[1]
-            this.contentMap["type"] = Contents.TEXT_PLAIN.type
-            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
-            this.contentMap["length"] = this.contentMap["body"].length
+            setupStatusInfo(500)
+            this.contentMap = Contents.generateEmpty()
         }
-    }
-
-    def execMethod(String method, String uri) {
-        // return status 405 if the method is undefined
-        if (!EnumUtils.isValidEnum(Methods, method)) {
-            def statusTmp = Statuses.getAsList(405)
-            this.statusCode = statusTmp[0]
-            this.reasonPhrase = statusTmp[1]
-            this.contentMap["type"] = Contents.TEXT_PLAIN.type
-            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
-            this.contentMap["length"] = this.contentMap["body"].length
-            return
-        }
-
-        // check if requested resource is defined
-        // return status 403 if it is undefined
-        if (!Resources.isDefined(method, uri)) {
-            def statusTmp = Statuses.getAsList(403)
-            this.statusCode = statusTmp[0]
-            this.reasonPhrase = statusTmp[1]
-            this.contentMap["type"] = Contents.TEXT_PLAIN.type
-            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
-            this.contentMap["length"] = this.contentMap["body"].length
-            return
-        }
-
-        // search contents and set some information about contents
-        this.contentMap = Contents.generate(method, uri)
-        if (this.contentMap["body"] == null) {
-            def statusTmp = Statuses.getAsList(404)
-            this.statusCode = statusTmp[0]
-            this.reasonPhrase = statusTmp[1]
-            this.contentMap["type"] = Contents.TEXT_PLAIN.type
-            this.contentMap["body"] = "".getBytes(Charset.forName("UTF-8"))
-            this.contentMap["length"] = this.contentMap["body"].length
-            return
-        }
-
-        // return status 200 if all procedures succeeded
-        def statusTmp = Statuses.getAsList(200)
-        this.statusCode = statusTmp[0]
-        this.reasonPhrase = statusTmp[1]
     }
 
     def setupServerInfo() {
@@ -78,6 +32,40 @@ class HttpResponse implements Response {
         // set server name for header field
         this.server = "deoxys"
         //InetAddress.getLocalHost().getHostName()
+    }
+
+    def setupStatusInfo(Integer statusCode) {
+        def statusTmp = Statuses.getAsList(statusCode)
+        this.statusCode = statusTmp[0]
+        this.reasonPhrase = statusTmp[1]
+    }
+
+    def execMethod(String method, String uri) {
+        // return status 405 if the method is undefined
+        if (!EnumUtils.isValidEnum(Methods, method)) {
+            setupStatusInfo(405)
+            this.contentMap = Contents.generateEmpty()
+            return
+        }
+
+        // check if requested resource is defined
+        // return status 403 if it is undefined
+        if (!Resources.isDefined(method, uri)) {
+            setupStatusInfo(403)
+            this.contentMap = Contents.generateEmpty()
+            return
+        }
+
+        // search contents and set some information about contents
+        this.contentMap = Contents.generate(method, uri)
+        if (this.contentMap["body"] == null) {
+            setupStatusInfo(404)
+            this.contentMap = Contents.generateEmpty()
+            return
+        }
+
+        // return status 200 if all procedures succeeded
+        setupStatusInfo(200)
     }
 
     def generateStatusLine() {
