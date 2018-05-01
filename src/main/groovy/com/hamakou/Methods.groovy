@@ -3,10 +3,10 @@ package com.hamakou
 import com.hamakou.*
 
 enum Methods {
-    GET,
-    HEAD,
+  GET,
+  HEAD,
 
-    static boolean contains(String method) {
-        return Methods.values().contains(method)
-    }
+  static boolean contains(String method) {
+    return Methods.values().contains(method)
+  }
 }
