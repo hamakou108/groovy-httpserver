@@ -33,7 +33,7 @@ Oh!!"""
     Request request = new HttpRequest(msg)
 
     expect:
-    request.getMsg() == result
+    request.msg == result
 
     where:
     msg | result
@@ -46,7 +46,7 @@ Oh!!"""
     Request request = new HttpRequest(msg)
 
     expect:
-    request.getMethod() + " " + request.getUri() + " " + request.getVersion() == result
+    request.method + " " + request.uri + " " + request.version == result
 
     where:
     msg | result
@@ -60,7 +60,7 @@ Oh!!"""
     Request request = new HttpRequest(msg)
 
     expect:
-    request.getHeaderMap("Host") == result
+    request.headerMap.get("Host") == result
 
     where:
     msg | result
@@ -74,7 +74,7 @@ Oh!!"""
     Request request = new HttpRequest(msg)
 
     expect:
-    request.getBody() == result
+    request.body == result
 
     where:
     msg | result

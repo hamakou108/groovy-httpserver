@@ -5,26 +5,58 @@ import org.apache.commons.lang3.EnumUtils
 
 import com.hamakou.*
 
+/**
+ * HttpResponse provides methods to generate response message from request informations.
+ */
 class HttpResponse implements Response {
+
+  /**
+   * The HTTP version of this server.
+   */
   String version
+
+  /**
+   * The status code as a result of analyzing request informations.
+   */
   Integer statusCode
+
+  /**
+   * The reason phrase corresponding to the status code.
+   */
   String reasonPhrase
+
+  /**
+   * This server name.
+   */
   String server
+
+  /**
+   * The informations of response contents.
+   */
   Map contentMap = [:]
 
+  /**
+   * Generate response informations by request informations.
+   *
+   * @param request request informations parsed by request message
+   */
   def HttpResponse(Request request) {
     // setup server information
     this.setupServerInfo()
 
     try {
-      // execute operation depending on method and uri
+      // generate informations to response depending on method and uri
       this.execMethod(request.method, request.uri)
     } catch (Exception e) {
+      // returns status 500 if some exception occurs
       setupStatusInfo(500)
-      this.contentMap = Contents.generateEmpty()
+      this.contentMap = Content.generateEmpty()
     }
   }
 
+  /**
+   * Generates server informations which is independent of a request.
+   */
   def setupServerInfo() {
     // set HTTP version for status line
     this.version = "HTTP/1.0"
@@ -33,45 +65,66 @@ class HttpResponse implements Response {
     this.server = "deoxys"
   }
 
+  /**
+   * Generates status informations by status code.
+   *
+   * @param statusCode status code which is compliance with RFC 1945
+   */
   def setupStatusInfo(Integer statusCode) {
-    def statusTmp = Statuses.getAsList(statusCode)
+    def statusTmp = Status.getAsList(statusCode)
     this.statusCode = statusTmp[0]
     this.reasonPhrase = statusTmp[1]
   }
 
+  /**
+   * Executes methods to generate information to response.
+   *
+   * <p> If response information includes unsuccessful elements, sets error status code and
+   * appropriate other informations and just return.
+   *
+   * @param method the request method like GET, HEAD
+   * @param uri the requested uri
+   */
   def execMethod(String method, String uri) {
-    // return status 405 if the method is undefined
-    if (!EnumUtils.isValidEnum(Methods, method)) {
+    // returns status 405 if the method is undefined
+    if (!EnumUtils.isValidEnum(Method, method)) {
       setupStatusInfo(405)
-      this.contentMap = Contents.generateEmpty()
+      this.contentMap = Content.generateEmpty()
       return
     }
 
-    // check if requested resource is defined
-    // return status 403 if it is undefined
-    if (!Resources.isDefined(method, uri)) {
+    // returns status 403 if the requested resource is forbiddend to access
+    if (!Resource.isDefined(method, uri)) {
       setupStatusInfo(403)
-      this.contentMap = Contents.generateEmpty()
+      this.contentMap = Content.generateEmpty()
       return
     }
 
-    // search contents and set some information about contents
-    this.contentMap = Contents.generate(method, uri)
+    // searches contents and sets some informations about contents
+    this.contentMap = Content.generate(method, uri)
+
+    // returns status 404 if the requested content does not exist
     if (this.contentMap["body"] == null) {
       setupStatusInfo(404)
-      this.contentMap = Contents.generateEmpty()
+      this.contentMap = Content.generateEmpty()
       return
     }
 
-    // return status 200 if all procedures succeeded
+    // returns status 200 if all procedures succeeded
     setupStatusInfo(200)
   }
 
+  /**
+   * Generates status line as a byte array.
+   */
   def generateStatusLine() {
     String statusLine = this.version + " " + this.statusCode + " " + this.reasonPhrase + "\n"
     return statusLine.getBytes(Charset.forName("UTF-8"))
   }
 
+  /**
+   * Generates response header as a byte array.
+   */
   def generateHeader() {
     String header = ""
     header += "Content-Type: " + this.contentMap["type"] + "\n"
@@ -80,10 +133,17 @@ class HttpResponse implements Response {
     return header.getBytes(Charset.forName("UTF-8"))
   }
 
+  /**
+   * Generates response body as a byte array.
+   */
   def generateBody() {
+    // returns an empty byte if a response body is null
     return this.contentMap["body"] ?: "".getBytes(Charset.forName("UTF-8"))
   }
 
+  /**
+   * Generates a whole response messagea as a byte array.
+   */
   def generateMsg() {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     outputStream.setBytes(this.generateStatusLine())

@@ -1,66 +1,53 @@
 package com.hamakou
 
+/**
+ * HttpRequest provides methods to parse a http request message and saves its information as
+ * instance variables.
+ */
 class HttpRequest implements Request {
+  /**
+   * The raw request message.
+   */
   String msg
+
+  /**
+   * The request method like GET, HEAD.
+   */
   String method
+
+  /**
+   * The request URI.
+   */
   String uri
+
+  /**
+   * The HTTP version of this server.
+   */
   String version
+
+  /**
+   * The request header as a map.
+   */
   def headerMap = [:]
+
+  /**
+   * The request body.
+   */
   String body
 
+  /**
+   * Saves and parses a request messages.
+   *
+   * @param msg the raw request message
+   */
   def HttpRequest(String msg) {
-    this.setMsg(msg)
+    this.msg = msg
     this.parseMsg()
   }
 
-  def getMsg() {
-    return this.msg
-  }
-
-  def setMsg(String msg) {
-    this.msg = msg
-  }
-
-  def getMethod() {
-    return this.method
-  }
-
-  def setMethod(String method) {
-    this.method = method
-  }
-
-  def getUri() {
-    return this.uri
-  }
-
-  def setUri(String uri) {
-    this.uri = uri
-  }
-
-  def getVersion() {
-    return this.version
-  }
-
-  def setVersion(String version) {
-    this.version = version
-  }
-
-  def getHeaderMap(String key) {
-    return this.headerMap.get(key)
-  }
-
-  def putHeaderMap(String key, String value) {
-    this.headerMap.put(key, value)
-  }
-
-  def getBody() {
-    return this.body
-  }
-
-  def setBody(String body) {
-    this.body = body
-  }
-
+  /**
+   * Parses a request message and saves its informations.
+   */
   def parseMsg() {
     // separate to request-line, header, body
     def msgSplitedByLineBreak = this.msg.split("\n", 2).toList()
@@ -68,17 +55,17 @@ class HttpRequest implements Request {
 
     // set request line
     def lineTmp = msgSplitedByLineBreak[0].tokenize(" *")
-    this.setMethod(lineTmp[0])
-    this.setUri(lineTmp[1])
-    this.setVersion(lineTmp[2])
+    this.method = lineTmp[0]
+    this.uri = lineTmp[1]
+    this.version = lineTmp[2]
 
-    // set requeet header field as map
+    // set requeet header field as a map object
     msgSplitedByDoubleLineBreak[0].tokenize("\n").each {
       def tmp = it.split(": *", 2).toList()
-      this.putHeaderMap(tmp[0], tmp[1])
+      this.headerMap.put(tmp[0], tmp[1])
     }
 
     // set request body
-    this.setBody(msgSplitedByDoubleLineBreak[1])
+    this.body = msgSplitedByDoubleLineBreak[1]
   }
 }

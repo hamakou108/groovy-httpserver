@@ -2,7 +2,11 @@ package com.hamakou
 
 import com.hamakou.*
 
-enum Statuses {
+/**
+ * Status has types of status codes and reasone phrases and provies methods to deal with their
+ * informations.
+ */
+enum Status {
   // Successful 2xx
   OK(200, "OK"),
 
@@ -16,17 +20,35 @@ enum Statuses {
   // Server Error 5xx
   INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
 
+  /**
+   * The response status code.
+   */
   private final Integer code
+
+  /**
+   * The reason phrase corresponding to the status code.
+   */
   private final String reason
 
-  Statuses(Integer code, String reason) {
+  /**
+   * Constructs an own object Setting a status code and a reason phrase.
+   *
+   * @param code the response status code
+   * @param reason the reason phrase corresponding to the status code
+   */
+  Status(Integer code, String reason) {
     this.code = code
     this.reason = reason
   }
 
+  /**
+   * Creates a list of a status code and a reason phrase which muches a code of argument.
+   *
+   * @param code the code corresponding to status to take out
+   */
   static List getAsList(Integer code) {
     def tmpList = []
-    Statuses.values().each {
+    Status.values().each {
       if (it.code == code) {
         tmpList.addAll(0, [it.code, it.reason])
       }
