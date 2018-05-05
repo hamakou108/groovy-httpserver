@@ -53,7 +53,7 @@ enum Content {
    *
    * @param method the request method
    * @param uri the request uri corresponding to resources
-   * @return the map which has informations of the content
+   * @return the map which has information of the content
    */
   static Map generate(String method, String uri) {
     def contentMap = [:]
@@ -98,7 +98,7 @@ enum Content {
    *
    * <p> {@code text/plain} is set as the value of content type.
    *
-   * @return the map which has informations of the empty content
+   * @return the map which has information of the empty content
    */
   static Map generateEmpty() {
     def contentMap = [:]

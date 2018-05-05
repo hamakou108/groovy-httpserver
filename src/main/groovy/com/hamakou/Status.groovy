@@ -4,7 +4,7 @@ import com.hamakou.*
 
 /**
  * Status has types of status codes and reasone phrases and provies methods to deal with their
- * informations.
+ * information.
  */
 enum Status {
   // Successful 2xx

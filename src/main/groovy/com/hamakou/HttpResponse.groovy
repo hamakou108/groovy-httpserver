@@ -6,7 +6,7 @@ import org.apache.commons.lang3.EnumUtils
 import com.hamakou.*
 
 /**
- * HttpResponse provides methods to generate response message from request informations.
+ * HttpResponse provides methods to generate response message from request information.
  */
 class HttpResponse implements Response {
 
@@ -16,7 +16,7 @@ class HttpResponse implements Response {
   String version
 
   /**
-   * The status code as a result of analyzing request informations.
+   * The status code as a result of analyzing request information.
    */
   Integer statusCode
 
@@ -31,21 +31,21 @@ class HttpResponse implements Response {
   String server
 
   /**
-   * The informations of response contents.
+   * The information of response contents.
    */
   Map contentMap = [:]
 
   /**
-   * Generate response informations by request informations.
+   * Generate response information by request information.
    *
-   * @param request request informations parsed by request message
+   * @param request request information parsed by request message
    */
   def HttpResponse(Request request) {
     // setup server information
     this.setupServerInfo()
 
     try {
-      // generate informations to response depending on method and uri
+      // generate information to response depending on method and uri
       this.execMethod(request.method, request.uri)
     } catch (Exception e) {
       // returns status 500 if some exception occurs
@@ -55,7 +55,7 @@ class HttpResponse implements Response {
   }
 
   /**
-   * Generates server informations which is independent of a request.
+   * Generates server information which is independent of a request.
    */
   def setupServerInfo() {
     // set HTTP version for status line
@@ -66,7 +66,7 @@ class HttpResponse implements Response {
   }
 
   /**
-   * Generates status informations by status code.
+   * Generates status information by status code.
    *
    * @param statusCode status code which is compliance with RFC 1945
    */
@@ -80,7 +80,7 @@ class HttpResponse implements Response {
    * Executes methods to generate information to response.
    *
    * <p> If response information includes unsuccessful elements, sets error status code and
-   * appropriate other informations and just return.
+   * appropriate other information and just return.
    *
    * @param method the request method like GET, HEAD
    * @param uri the requested uri
@@ -100,7 +100,7 @@ class HttpResponse implements Response {
       return
     }
 
-    // searches contents and sets some informations about contents
+    // searches contents and sets some information about contents
     this.contentMap = Content.generate(method, uri)
 
     // returns status 404 if the requested content does not exist

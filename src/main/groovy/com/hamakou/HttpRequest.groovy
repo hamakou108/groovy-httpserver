@@ -46,7 +46,7 @@ class HttpRequest implements Request {
   }
 
   /**
-   * Parses a request message and saves its informations.
+   * Parses a request message and saves its information.
    */
   def parseMsg() {
     // separate to request-line, header, body
